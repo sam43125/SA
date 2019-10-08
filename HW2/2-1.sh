@@ -1,0 +1,2 @@
+#!/usr/local/bin/bash
+ls -ARl | egrep '^[-d]' | awk 'BEGIN {OFS=" "}; {print $1,$5,$9}' | cut -c1,11- | sort -nrk 2 | awk 'BEGIN{nDirs=0; nFiles=0; nSum=0} {if($1 ~ /-/) { nFiles += 1; nSum += $2; if(NR <= 5) print NR":"$2" "$3; }else {nDirs += 1;}} END{print "Dir num: "nDirs; print "File num:"nFiles; print "Total: "nSum;}'
