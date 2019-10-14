@@ -227,7 +227,8 @@ CPULoadingGauge() {
     else
         local delay=2
     fi
-    local avg=`top -d$delay | grep 'CPU:' | tail -n1 | egrep -o "$regex_floating system" | cut -d ' ' -f1`
+    local avg_idle=`top -d$delay | grep 'CPU:' | tail -n1 | egrep -o "$regex_floating idle" | cut -d ' ' -f1`
+	local avg_used=$((100 - ${avg_idle%%\.*}))
     local temps=`top -P -d$delay | egrep 'CPU( [0-9]+|:)'`
     local cores
     local old_IFS=$IFS
@@ -242,7 +243,7 @@ CPULoadingGauge() {
     IFS=$old_IFS
 
     local TEXT="CPU Loading\n$cores"
-    CHOICE=$(dialog --mixedgauge "$TEXT" $HEIGHT $WIDTH ${avg%%\.*} 2>&1 >/dev/tty)
+    CHOICE=$(dialog --mixedgauge "$TEXT" $HEIGHT $WIDTH $avg_used 2>&1 >/dev/tty)
     read n
     MainMenu
 }
